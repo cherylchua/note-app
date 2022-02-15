@@ -1,0 +1,22 @@
+{
+  "name": "note-app",
+  "version": "1.0.0",
+  "description": "Manage personal notes in a multi-user environment",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cherylchua/note-app.git"
+  },
+  "author": "Cheryl Chua",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cherylchua/note-app/issues"
+  },
+  "homepage": "https://github.com/cherylchua/note-app#readme",
+  "dependencies": {
+    "typescript": "^4.5.5"
+  }
+}
