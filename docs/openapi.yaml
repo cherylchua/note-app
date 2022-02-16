@@ -249,9 +249,11 @@ components:
 
     CreateNoteRequest:
       type: object
-      required:
-        - content
       properties:
+        title:
+          type: string
+          description: Title of note
+          example: 'My First Note'
         content:
           type: string
           description: Contents of the note
