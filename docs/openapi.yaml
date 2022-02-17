@@ -66,7 +66,7 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/UserId'
-        - name: archived
+        - name: is_archived
           in: query
           required: false
           schema:
@@ -200,9 +200,9 @@ paths:
             schema:
               type: object
               required:
-                - archived
+                - should_archive
               properties:
-                archived:
+                should_archive:
                   type: boolean
                   description: Move note to or from archive
       responses:
@@ -293,8 +293,8 @@ components:
       required:
         - id
         - user_id
+        - title
         - content
-        - is_deleted
         - is_archived
         - created_at
         - updated_at
@@ -303,6 +303,10 @@ components:
           $ref: '#/components/schemas/NoteId'
         user_id:
           $ref: '#/components/schemas/UserId'
+        title:
+          type: string
+          description: Title of note
+          example: 'My First Note'
         content:
           type: string
           description: Contents of the note
