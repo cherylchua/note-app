@@ -7,8 +7,9 @@
     "test": "npm test",
     "format": "prettier --config .prettierrc.json --write './**/*.{js,ts,json,yml,yaml}'",
     "build": "rm -rf dist && tsc",
-    "start": "tsc && node ./dist/src/app.js",
-    "knex:run-migrations": "knex migrate:latest"
+    "start": "tsc && node ./dist/app.js",
+    "knex:create-migration": "knex migrate:make create_users_and_notes_table -x ts",
+    "knex:run-migrations": "knex migrate:latest --knexfile ./src/db/knexfile.ts"
   },
   "repository": {
     "type": "git",

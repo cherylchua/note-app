@@ -12,7 +12,7 @@ export async function up(knex: Knex): Promise<void> {
 
     await knex.schema.createTableIfNotExists('notes', table => {
         table.uuid('id').primary()
-        table.foreign('user_id').references('id').inTable('users').onDelete('CASCADE')
+        table.uuid('user_id').notNullable().references('id').inTable('users').onDelete('CASCADE')
         table.string('title')
         table.text('content')
         table.boolean('is_archived').notNullable()
