@@ -58,7 +58,7 @@ paths:
                 $ref: '#/components/schemas/Error400Response'
 
     get:
-      summary: Get all notes belonging to a user, listed from newest to oldest
+      summary: Get all notes belonging to a user, listed by updated desc
       operationId: getNotes
       parameters:
         - name: user_id
@@ -266,8 +266,8 @@ components:
         - first_name
         - last_name
         - email
-        - created
-        - updated
+        - created_at
+        - updated_at
       properties:
         id:
           $ref: '#/components/schemas/UserId'
@@ -283,10 +283,10 @@ components:
           type: string
           description: Email of user
           example: dobbyizfree@gmail.com
-        created:
-          $ref: '#/components/schemas/Created'
-        updated:
-          $ref: '#/components/schemas/Updated'
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: '#/components/schemas/UpdatedAt'
 
     Note:
       type: object
@@ -296,8 +296,8 @@ components:
         - content
         - is_deleted
         - is_archived
-        - created
-        - updated
+        - created_at
+        - updated_at
       properties:
         id:
           $ref: '#/components/schemas/NoteId'
@@ -311,10 +311,10 @@ components:
           type: boolean
           default: false
           description: Indicator on whether note has been archived
-        created:
-          $ref: '#/components/schemas/Created'
-        updated:
-          $ref: '#/components/schemas/Updated'
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: '#/components/schemas/UpdatedAt'
 
     UserId:
       type: string
@@ -328,13 +328,13 @@ components:
       description: Unique identifier of note
       example: 'df3a04bd-5924-4538-85ee-841b1dca5329'
 
-    Created:
+    CreatedAt:
       type: string
       format: date
       description: Created time of resource in ISO format UTC+0
       example: '2022-02-16T18:20:00.660Z'
 
-    Updated:
+    UpdatedAt:
       type: string
       format: date
       description: Updated time of resource in ISO format UTC+0
