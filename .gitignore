@@ -74,3 +74,6 @@ typings/
 
 # Build output
 dist
+
+# Sqlite3 DB
+db.sqlite3

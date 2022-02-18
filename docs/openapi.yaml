@@ -27,6 +27,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400Response'
+        409:
+          description: Duplicate request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409Response'
 
   /users/{user_id}/notes:
     post:
@@ -383,6 +389,20 @@ components:
           type: string
           enum:
             - DATA_NOT_FOUND
+        message:
+          type: string
+          example: 'Some error message'
+
+    Error409Response:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          enum:
+            - DUPLICATE_ERROR
         message:
           type: string
           example: 'Some error message'
