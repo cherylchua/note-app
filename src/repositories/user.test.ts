@@ -1,12 +1,11 @@
-import knex, { Knex } from "knex"
+import { Knex } from "knex"
 
-import config from "./../../knexfile"
 import {up, down} from "./../db/migrations/20220217000647_create_users_and_notes_table"
-import { CustomError } from "src/utils/error"
+import { Sqlite3Helper } from "../db/sqlite3"
+import { CustomError } from "../utils/error"
 
-import { CreateUserRequest } from "src/entities/user"
+import { CreateUserRequest } from "../entities/user"
 import { UserRepository } from "./user"
-
 
 describe('UserRepository', () => {
     let dbConnection: Knex;
@@ -19,14 +18,14 @@ describe('UserRepository', () => {
     }
 
     beforeAll(async() => {
-        dbConnection = knex(config[`${process.env.NODE_ENV}`]); 
+        dbConnection = await Sqlite3Helper.initialiseConnection();
         userRepository = new UserRepository(dbConnection);
         await up(dbConnection);
     })
 
     afterAll(async() => {
         await down(dbConnection);
-        dbConnection.destroy();
+        await Sqlite3Helper.closeConnection(dbConnection);
     })
         
     describe('insertAndReturn', () => {
