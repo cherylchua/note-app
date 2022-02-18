@@ -4,8 +4,8 @@ import config from '../../knexfile';
 export class Sqlite3Helper {
     public static config: Knex.Config;
 
-    public static async initialiseConnection(): Promise<Knex> {
-        const dbConnection = await knex(config[`${process.env.NODE_ENV}`])
+    public static initialiseConnection(): Knex {
+        const dbConnection = knex(config[`${process.env.NODE_ENV}`])
 
         return dbConnection;
     }
