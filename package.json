@@ -5,7 +5,7 @@
   "main": "server.ts",
   "scripts": {
     "test": "NODE_ENV=test jest",
-    "format": "prettier --config .prettierrc.json --write'",
+    "format": "prettier --config .prettierrc.json -w '*.{ts,js,json,yaml}' './src/**/*.{ts,js,json,yaml}'",
     "build": "rm -rf dist && tsc",
     "start": "NODE_ENV=development tsc && node ./dist/src/server.js",
     "watch": "NODE_ENV=development nodemon src/server.ts",
