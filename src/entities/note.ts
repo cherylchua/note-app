@@ -21,14 +21,14 @@ export interface GetNotesRequest {
 
 export interface UpdateNoteRequest {
     user_id: string;
-    note_id: string;
+    id: string;
     title?: string;
     content?: string;
 }
 
 export interface DeleteNoteRequest {
     user_id: string;
-    note_id: string;
+    id: string;
 }
 
 export interface DeleteNoteResponse {
@@ -38,6 +38,6 @@ export interface DeleteNoteResponse {
 
 export interface ArchiveOrUnarchiveNoteRequest {
     user_id: string;
-    note_id: string;
+    id: string;
     should_archive: boolean;
 }
