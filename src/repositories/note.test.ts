@@ -5,7 +5,7 @@ import { up, down } from './../db/migrations/20220217000647_create_users_and_not
 import { Sqlite3Helper } from '../db/sqlite3';
 import { CustomError } from '../utils/error';
 
-import { CreateNoteRequest, Note, UpdateNoteRequest } from '../entities/note';
+import { CreateNoteRequest, DeleteNoteRequest, Note, UpdateNoteRequest } from '../entities/note';
 import { NoteRepository } from './note';
 import { UserRepository } from './user';
 import { CreateUserRequest } from 'src/entities/user';
@@ -110,7 +110,9 @@ describe('NoteRepository', () => {
                 is_archived: false
             };
 
-            const res = await noteRepository.updateNote(mockUpdateNoteReq);
+            await noteRepository.updateNote(mockUpdateNoteReq);
+
+            const res = await noteRepository.getNoteById(noteId);
 
             expect(res).toEqual(expect.objectContaining(expectedFields));
             expect(res.created_at).toBeTruthy();
@@ -118,28 +120,105 @@ describe('NoteRepository', () => {
         });
     });
 
-    // describe('deleteNote', () => {
-    //     it('should call the delete function', async () => {
-    //         const note = await noteRepository.deleteNote();
-    //         const noteId = note.id;
+    describe('getNoteById', () => {
+        it('should return a note if exists', async () => {
+            const note = await noteRepository.insertAndReturn(userId, mockCreateNoteReq, false);
 
-    //         const mockUpdateNoteReq: UpdateNoteRequest = {
-    //             user_id: userId,
-    //             id: noteId,
-    //             title: 'All Too Well'
-    //         };
+            const res = await noteRepository.getNoteById(note.id);
 
-    //         const expectedFields = {
-    //             ...mockUpdateNoteReq,
-    //             content: mockCreateNoteReq.content,
-    //             is_archived: false
-    //         }
+            const expectedFields = {
+                user_id: userId,
+                ...mockCreateNoteReq,
+                is_archived: false
+            };
 
-    //         const res = await noteRepository.updateNote(mockUpdateNoteReq);
+            expect(res).toEqual(expect.objectContaining(expectedFields));
+            expect(res.created_at).toBeTruthy();
+            expect(res.updated_at).toBeTruthy();
+        });
 
-    //         expect(res).toEqual(expect.objectContaining(expectedFields));
-    //         expect(res.created_at).toBeTruthy();
-    //         expect(res.updated_at).toBeTruthy();
-    //     });
-    // });
+        it('should throw DATA_NOT_FOUND if note does not exist', async () => {
+            const expectedError = {
+                error_code: 'DATA_NOT_FOUND',
+                message: `Note with id non existent note not found`,
+                context: { id: 'non existent note' }
+            };
+            try {
+                return await noteRepository.getNoteById('non existent note');
+            } catch (err: any) {
+                if (err && err.error_code && err.message) {
+                    expect(err.error_code).toEqual(expectedError.error_code);
+                    expect(err.message).toEqual(expectedError.message);
+                }
+            }
+        });
+    });
+
+    describe('getNotes', () => {
+        it('should get all unarchived notes for a user with limit', async () => {
+            const mockGetNotesRequest = {
+                user_id: userId,
+                is_archived: false,
+                limit: 3
+            };
+
+            const res = await noteRepository.getNotes(mockGetNotesRequest);
+
+            expect(res.length).toEqual(3);
+            expect(res[0].updated_at >= res[2].updated_at).toEqual(true);
+        });
+
+        it('should throw DATA_NOT_FOUND if no notes found', async () => {
+            const mockGetNotesRequest = {
+                user_id: 'non existent note',
+                is_archived: false,
+                limit: 3
+            };
+
+            const expectedError = {
+                error_code: 'DATA_NOT_FOUND',
+                message: `No notes found.`,
+                context: mockGetNotesRequest
+            };
+            try {
+                return await noteRepository.getNotes(mockGetNotesRequest);
+            } catch (err: any) {
+                if (err && err.error_code && err.message) {
+                    expect(err.error_code).toEqual(expectedError.error_code);
+                    expect(err.message).toEqual(expectedError.message);
+                }
+            }
+        });
+    });
+
+    describe('deleteNote', () => {
+        it('should call the delete function', async () => {
+            const noteToDelete = await noteRepository.insertAndReturn(userId, mockCreateNoteReq, false);
+
+            await noteRepository.deleteNote({ user_id: userId, id: noteToDelete.id });
+
+            await expect(noteRepository.getNoteById(noteToDelete.id)).rejects.toThrow(CustomError);
+        });
+    });
+
+    describe('archiveOrUnarchiveNote', () => {
+        it('should call the update function', async () => {
+            const insertedNote = await noteRepository.insertAndReturn(userId, mockCreateNoteReq, false);
+
+            const mockArchiveNoteRequest = {
+                user_id: userId,
+                id: insertedNote.id,
+                should_archive: true
+            };
+
+            const note = await noteRepository.archiveOrUnarchiveNote(mockArchiveNoteRequest);
+
+            const res = await noteRepository.getNoteById(insertedNote.id);
+
+            expect(res).toEqual(expect.objectContaining(mockCreateNoteReq));
+            expect(res.is_archived).toEqual(true);
+            expect(res.created_at).toBeTruthy();
+            expect(res.updated_at).toBeTruthy();
+        });
+    });
 });
