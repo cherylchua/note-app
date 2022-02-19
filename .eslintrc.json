@@ -1,25 +1,25 @@
 {
-  "env": {
-    "commonjs": true,
-    "es2021": true,
-    "node": true,
-    "jest": true
-  },
-  "extends": ["airbnb-base", "prettier"],
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "ecmaVersion": "latest"
-  },
-  "plugins": ["@typescript-eslint", "prettier"],
-  "rules": {
-    "import/no-default-export": "error",
-    "import/prefer-default-export": "off",
-    "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/interface-name-prefix": "off",
-    "class-methods-use-this": "warn",
-    "filenames/match-regex": [2, "^[0-9a-z-.]+$", true],
-    "no-process-env": "error",
-    "@typescript-eslint/indent": ["error", 2],
-    "prettier/prettier": "error"
-  }
+    "env": {
+        "commonjs": true,
+        "es2021": true,
+        "node": true,
+        "jest": true
+    },
+    "extends": ["airbnb-base", "prettier"],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "plugins": ["@typescript-eslint", "prettier"],
+    "rules": {
+        "import/no-default-export": "error",
+        "import/prefer-default-export": "off",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/interface-name-prefix": "off",
+        "class-methods-use-this": "warn",
+        "filenames/match-regex": [2, "^[0-9a-z-.]+$", true],
+        "no-process-env": "error",
+        "@typescript-eslint/indent": ["error", 2],
+        "prettier/prettier": "error"
+    }
 }
