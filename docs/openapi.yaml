@@ -340,15 +340,13 @@ components:
 
     CreatedAt:
       type: string
-      format: date
-      description: Created time of resource in ISO format UTC+0
-      example: '2022-02-16T18:20:00.660Z'
+      description: Created time of resource
+      example: '2022-02-16 18:20:00'
 
     UpdatedAt:
       type: string
-      format: date
-      description: Updated time of resource in ISO format UTC+0
-      example: '2022-02-16T18:21:00.660Z'
+      description: Updated time of resource
+      example: '2022-02-16 18:21:00'
 
     Error400Response:
       type: object

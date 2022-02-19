@@ -24,7 +24,7 @@ export class UserController {
 
             const createUserResponse: User = await this.userService.createUser(createUserRequest);
 
-            res.status(200).json(createUserResponse);
+            res.status(201).json(createUserResponse);
         } catch(err) {
             next(err);
         }
