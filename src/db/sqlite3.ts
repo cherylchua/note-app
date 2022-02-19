@@ -3,14 +3,15 @@ import config from '../../knexfile';
 
 export class Sqlite3Helper {
     public static config: Knex.Config;
+    static dbConnection: Knex<any, unknown[]>;
 
     public static initialiseConnection(): Knex {
-        const dbConnection = knex(config[`${process.env.NODE_ENV}`]);
+        this.dbConnection = knex(config[`${process.env.NODE_ENV}`]);
 
-        return dbConnection;
+        return Sqlite3Helper.dbConnection;
     }
 
-    public static async closeConnection(dbConnection: Knex): Promise<void> {
-        await dbConnection.destroy();
+    public static async closeConnection(): Promise<void> {
+        await Sqlite3Helper.dbConnection.destroy();
     }
 }

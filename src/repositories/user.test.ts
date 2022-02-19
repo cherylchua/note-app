@@ -18,14 +18,15 @@ describe('UserRepository', () => {
     };
 
     beforeAll(async () => {
-        dbConnection = await Sqlite3Helper.initialiseConnection();
-        userRepository = new UserRepository(dbConnection);
+        userRepository = new UserRepository();
+        dbConnection = Sqlite3Helper.dbConnection;
+
         await up(dbConnection);
     });
 
     afterAll(async () => {
         await down(dbConnection);
-        await Sqlite3Helper.closeConnection(dbConnection);
+        await Sqlite3Helper.closeConnection();
     });
 
     describe('insertAndReturn', () => {

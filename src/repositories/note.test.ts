@@ -1,11 +1,10 @@
 import { Knex } from 'knex';
-import { v4 as uuidv4 } from 'uuid';
 
 import { up, down } from './../db/migrations/20220217000647_create_users_and_notes_table';
 import { Sqlite3Helper } from '../db/sqlite3';
 import { CustomError } from '../utils/error';
 
-import { CreateNoteRequest, DeleteNoteRequest, Note, UpdateNoteRequest } from '../entities/note';
+import { CreateNoteRequest, UpdateNoteRequest } from '../entities/note';
 import { NoteRepository } from './note';
 import { UserRepository } from './user';
 import { CreateUserRequest } from 'src/entities/user';
@@ -18,9 +17,10 @@ describe('NoteRepository', () => {
     let userId: string;
 
     beforeAll(async () => {
-        dbConnection = await Sqlite3Helper.initialiseConnection();
-        userRepository = new UserRepository(dbConnection);
+        userRepository = new UserRepository();
         noteRepository = new NoteRepository();
+
+        dbConnection = Sqlite3Helper.dbConnection;
 
         await up(dbConnection);
 
@@ -36,7 +36,7 @@ describe('NoteRepository', () => {
 
     afterAll(async () => {
         await down(dbConnection);
-        await Sqlite3Helper.closeConnection(dbConnection);
+        await Sqlite3Helper.closeConnection();
     });
 
     const mockCreateNoteReq: CreateNoteRequest = {

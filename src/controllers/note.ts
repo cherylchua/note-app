@@ -33,7 +33,7 @@ export class NoteController {
         try {
             const createNoteRequest: CreateNoteRequest = req.body;
 
-            const createNoteResponse = await this.noteService.createNote(createNoteRequest);
+            const createNoteResponse = await this.noteService.createNote(req.params.user_id, createNoteRequest);
 
             res.status(201).json(createNoteResponse);
         } catch (err) {

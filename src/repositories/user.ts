@@ -1,8 +1,11 @@
 import { Knex } from 'knex';
 import { v4 as uuidv4 } from 'uuid';
-import { CreateUserRequest, User } from './../entities/user';
 import { SqliteError } from 'better-sqlite3';
+
+import { Sqlite3Helper } from 'src/db/sqlite3';
 import { CustomError, SqliteErrorCode } from './../utils/error';
+
+import { CreateUserRequest, User } from './../entities/user';
 
 export interface IUserRepository {
     insertAndReturn(insertUserRequest: CreateUserRequest): Promise<User>;
@@ -11,8 +14,8 @@ export interface IUserRepository {
 export class UserRepository implements IUserRepository {
     private dbConnection: Knex;
 
-    constructor(dbConnection: Knex) {
-        this.dbConnection = dbConnection;
+    constructor() {
+        this.dbConnection = Sqlite3Helper.initialiseConnection();
     }
 
     async insertAndReturn(insertUserRequest: CreateUserRequest): Promise<User> {

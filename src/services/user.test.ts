@@ -10,9 +10,13 @@ describe('UserService', () => {
     beforeAll(() => {
         jest.mock('../repositories/user');
         const MockUserRepository = UserRepository as jest.Mocked<typeof UserRepository>;
-        mockUserRepository = new MockUserRepository(Sqlite3Helper.initialiseConnection());
+        mockUserRepository = new MockUserRepository();
 
         mockUserService = new UserService(mockUserRepository);
+    });
+
+    afterAll(() => {
+        Sqlite3Helper.closeConnection();
     });
 
     describe('createUser', () => {

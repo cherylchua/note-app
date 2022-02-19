@@ -5,6 +5,21 @@ info:
   title: 'Note App'
 
 paths:
+  /healthcheck:
+    get:
+      summary: Healthcheck endpoint to ensure server is running
+      responses:
+        200:
+          description: Healthcheck response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: 'OK'
+
   /users:
     post:
       summary: Create a user
@@ -311,10 +326,12 @@ components:
           $ref: '#/components/schemas/UserId'
         title:
           type: string
+          nullable: true
           description: Title of note
           example: 'My First Note'
         content:
           type: string
+          nullable: true
           description: Contents of the note
           example: 'Hello World!'
         is_archived:
