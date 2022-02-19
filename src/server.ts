@@ -1,20 +1,19 @@
 import dotenv from 'dotenv';
-import { setupApp } from './app'
+import { setupApp } from './app';
 
 dotenv.config();
 
-(async() => {
-    try {
-        const app = await setupApp(process.env.PORT || '3000');
-        
-        app.listen(app.get('port'), () => {
-            console.log({
-                ENV: app.get('env'),
-                PORT: `Listening on port ${app.get('port')}`
-            })
-        });
+(async () => {
+  try {
+    const app = await setupApp(process.env.PORT || '3000');
 
-    } catch (err) {
-        console.log(err, 'error caught in server.ts');
-    }
-})()
+    app.listen(app.get('port'), () => {
+      console.log({
+        ENV: app.get('env'),
+        PORT: `Listening on port ${app.get('port')}`
+      });
+    });
+  } catch (err) {
+    console.log(err, 'error caught in server.ts');
+  }
+})();

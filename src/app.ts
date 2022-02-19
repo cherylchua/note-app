@@ -10,55 +10,51 @@ import { UserService } from './services/user';
 import { UserRepository } from './repositories/user';
 import { errorHandler } from './middlewares/error-handler';
 
-
 // initialise dependencies
-async function init(){
-    const dbConnection = Sqlite3Helper.initialiseConnection();
-        
-    const userRepository = new UserRepository(dbConnection);
-    
-    const userService = new UserService(userRepository);
-    
-    const healthcheckController = new HealthcheckController();
-    const userController = new UserController(userService);
+async function init() {
+  const dbConnection = Sqlite3Helper.initialiseConnection();
 
-    return {
-        healthcheckController,
-        userController
-    }
+  const userRepository = new UserRepository(dbConnection);
+
+  const userService = new UserService(userRepository);
+
+  const healthcheckController = new HealthcheckController();
+  const userController = new UserController(userService);
+
+  return {
+    healthcheckController,
+    userController
+  };
 }
 
 const openApiDoc = path.join(__dirname, '..', 'docs', 'openapi.yaml');
 
 // setup application routes with controllers
 async function setupRoutes(app: Application) {
-    const {
-        healthcheckController,
-        userController
-    } = await init();
+  const { healthcheckController, userController } = await init();
 
-    app.get('/spec', express.static(openApiDoc));
-    app.use('/', healthcheckController.getRouter());
-    app.use('/', userController.getRouter());
+  app.get('/spec', express.static(openApiDoc));
+  app.use('/', healthcheckController.getRouter());
+  app.use('/', userController.getRouter());
 }
 
 export async function setupApp(port: string): Promise<express.Application> {
-    const app = express();
-    app.set('port', port)
-    app.use(express.json({ limit: '5mb', type: 'application/json' }))
-    app.use(express.urlencoded({extended: true}));
+  const app = express();
+  app.set('port', port);
+  app.use(express.json({ limit: '5mb', type: 'application/json' }));
+  app.use(express.urlencoded({ extended: true }));
 
-    app.use(
-        OpenApiValidator.middleware({
-          apiSpec: openApiDoc,
-          validateRequests: true,
-          validateResponses: true,
-        }),
-    );
+  app.use(
+    OpenApiValidator.middleware({
+      apiSpec: openApiDoc,
+      validateRequests: true,
+      validateResponses: true
+    })
+  );
 
-    await setupRoutes(app);
+  await setupRoutes(app);
 
-    app.use(errorHandler);
+  app.use(errorHandler);
 
-    return app;
+  return app;
 }
