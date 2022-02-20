@@ -1,0 +1,203 @@
+{
+    "info": {
+        "_postman_id": "3bddeba8-8736-4b94-a686-0d958879accb",
+        "name": "NoteApp",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Healthcheck",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "localhost:3000/healthcheck",
+                    "host": ["localhost"],
+                    "port": "3000",
+                    "path": ["healthcheck"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Create User",
+            "protocolProfileBehavior": {
+                "disabledSystemHeaders": {}
+            },
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"first_name\": \"Cheryl\",\n    \"last_name\": \"W-Taylor\",\n    \"email\": \"cheryl@gmail.com\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "localhost:3000/users",
+                    "host": ["localhost"],
+                    "port": "3000",
+                    "path": ["users"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Create Note",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"title\": \"some title!\",\n    \"content\": \"insert some interesting content here\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "http://localhost:3000/users/:user_id/notes",
+                    "protocol": "http",
+                    "host": ["localhost"],
+                    "port": "3000",
+                    "path": ["users", ":user_id", "notes"],
+                    "variable": [
+                        {
+                            "key": "user_id",
+                            "value": "66acb1be-25e4-4bc5-bd3a-47a5a508c954"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Update Note",
+            "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"title\": \"A new title!\",\n    \"content\": \"Some new content too!\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "http://localhost:3000/users/:user_id/notes/:note_id",
+                    "protocol": "http",
+                    "host": ["localhost"],
+                    "port": "3000",
+                    "path": ["users", ":user_id", "notes", ":note_id"],
+                    "variable": [
+                        {
+                            "key": "user_id",
+                            "value": "66acb1be-25e4-4bc5-bd3a-47a5a508c954"
+                        },
+                        {
+                            "key": "note_id",
+                            "value": "09d1494b-f130-4715-acf2-0cfdc85b9fd5"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get Notes with limit and archived options",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:3000/users/:user_id/notes?limit=10&is_archived=false",
+                    "protocol": "http",
+                    "host": ["localhost"],
+                    "port": "3000",
+                    "path": ["users", ":user_id", "notes"],
+                    "query": [
+                        {
+                            "key": "limit",
+                            "value": "10"
+                        },
+                        {
+                            "key": "is_archived",
+                            "value": "false"
+                        }
+                    ],
+                    "variable": [
+                        {
+                            "key": "user_id",
+                            "value": "60af57a6-3f10-4099-b5c5-a853fb99cc9c"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Note Archival",
+            "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"should_archive\" : true\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "http://localhost:3000/users/:user_id/notes/:note_id/archive",
+                    "protocol": "http",
+                    "host": ["localhost"],
+                    "port": "3000",
+                    "path": ["users", ":user_id", "notes", ":note_id", "archive"],
+                    "variable": [
+                        {
+                            "key": "user_id",
+                            "value": "66acb1be-25e4-4bc5-bd3a-47a5a508c954"
+                        },
+                        {
+                            "key": "note_id",
+                            "value": "09d1494b-f130-4715-acf2-0cfdc85b9fd5"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Delete Note",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:3000/users/:user_id/notes/:note_id",
+                    "protocol": "http",
+                    "host": ["localhost"],
+                    "port": "3000",
+                    "path": ["users", ":user_id", "notes", ":note_id"],
+                    "variable": [
+                        {
+                            "key": "user_id",
+                            "value": "60af57a6-3f10-4099-b5c5-a853fb99cc9c"
+                        },
+                        {
+                            "key": "note_id",
+                            "value": "576dedd8-f56c-4ceb-bef1-8bc316d9f685"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        }
+    ]
+}
