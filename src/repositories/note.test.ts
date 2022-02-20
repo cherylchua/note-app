@@ -112,7 +112,7 @@ describe('NoteRepository', () => {
 
             await noteRepository.updateNote(mockUpdateNoteReq);
 
-            const res = await noteRepository.getNoteById(noteId);
+            const res = await noteRepository.getNoteByIdAndUserId(noteId, userId);
 
             expect(res).toEqual(expect.objectContaining(expectedFields));
             expect(res.created_at).toBeTruthy();
@@ -128,7 +128,7 @@ describe('NoteRepository', () => {
 
             const expectedError = {
                 error_code: 'DATA_NOT_FOUND',
-                message: `Note with id ${mockUpdateNoteReq.id} not found`,
+                message: `Note with user_id:${mockUpdateNoteReq.user_id} and id:${mockUpdateNoteReq.id} not found`,
                 context: { mockUpdateNoteReq }
             };
 
@@ -143,11 +143,11 @@ describe('NoteRepository', () => {
         });
     });
 
-    describe('getNoteById', () => {
+    describe('getNoteByIdAndUserId', () => {
         it('should return a note if exists', async () => {
             const note = await noteRepository.insertAndReturn(userId, mockCreateNoteReq, false);
 
-            const res = await noteRepository.getNoteById(note.id);
+            const res = await noteRepository.getNoteByIdAndUserId(note.id, userId);
 
             const expectedFields = {
                 user_id: userId,
@@ -168,7 +168,7 @@ describe('NoteRepository', () => {
             };
 
             try {
-                return await noteRepository.getNoteById('non existent note');
+                return await noteRepository.getNoteByIdAndUserId('non existent note', userId);
             } catch (err: any) {
                 if (err && err.error_code && err.message) {
                     expect(err.error_code).toEqual(expectedError.error_code);
@@ -221,7 +221,26 @@ describe('NoteRepository', () => {
 
             await noteRepository.deleteNote({ user_id: userId, id: noteToDelete.id });
 
-            await expect(noteRepository.getNoteById(noteToDelete.id)).rejects.toThrow(CustomError);
+            await expect(noteRepository.getNoteByIdAndUserId(noteToDelete.id, userId)).rejects.toThrow(CustomError);
+        });
+
+        it('should throw DATA_NOT_FOUND error if trying to delete note that doesnt exist', async () => {
+            const mockDeleteNoteRequest = { user_id: userId, id: 'note that doesnt exist' };
+
+            const expectedError = {
+                error_code: 'DATA_NOT_FOUND',
+                message: `Note with user_id:${userId} and id:${mockDeleteNoteRequest.id} not found`,
+                context: { mockDeleteNoteRequest }
+            };
+
+            try {
+                await noteRepository.deleteNote(mockDeleteNoteRequest);
+            } catch (err: any) {
+                if (err && err.error_code && err.message) {
+                    expect(err.error_code).toEqual(expectedError.error_code);
+                    expect(err.message).toEqual(expectedError.message);
+                }
+            }
         });
     });
 
@@ -237,7 +256,7 @@ describe('NoteRepository', () => {
 
             const note = await noteRepository.archiveOrUnarchiveNote(mockArchiveNoteRequest);
 
-            const res = await noteRepository.getNoteById(insertedNote.id);
+            const res = await noteRepository.getNoteByIdAndUserId(insertedNote.id, userId);
 
             expect(res).toEqual(expect.objectContaining(mockCreateNoteReq));
             expect(res.is_archived).toEqual(true);

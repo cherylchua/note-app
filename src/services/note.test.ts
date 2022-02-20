@@ -1,6 +1,7 @@
 import { Sqlite3Helper } from 'src/db/sqlite3';
-import { UpdateNoteRequest } from 'src/entities/note';
+import { ArchiveOrUnarchiveNoteRequest, GetNotesRequest, UpdateNoteRequest } from 'src/entities/note';
 import { NoteRepository } from 'src/repositories/note';
+import { CustomError } from 'src/utils/error';
 import { NoteService } from './note';
 
 describe('NoteService', () => {
@@ -69,7 +70,7 @@ describe('NoteService', () => {
             return 1;
         });
 
-        mockNoteRepository.getNoteById = jest.fn().mockImplementation(() => {
+        mockNoteRepository.getNoteByIdAndUserId = jest.fn().mockImplementation(() => {
             return mockNoteRepositoryResponse;
         });
 
@@ -85,8 +86,11 @@ describe('NoteService', () => {
 
             expect(mockNoteRepository.updateNote).toBeCalledTimes(1);
             expect(mockNoteRepository.updateNote).toBeCalledWith(mockUpdateNoteRequest);
-            expect(mockNoteRepository.getNoteById).toBeCalledTimes(1);
-            expect(mockNoteRepository.getNoteById).toBeCalledWith(mockUpdateNoteRequest.id);
+            expect(mockNoteRepository.getNoteByIdAndUserId).toBeCalledTimes(1);
+            expect(mockNoteRepository.getNoteByIdAndUserId).toBeCalledWith(
+                mockUpdateNoteRequest.id,
+                mockUpdateNoteRequest.user_id
+            );
             expect(res).toEqual(mockNoteRepositoryResponse);
         });
 
@@ -101,8 +105,11 @@ describe('NoteService', () => {
 
             expect(mockNoteRepository.updateNote).toBeCalledTimes(1);
             expect(mockNoteRepository.updateNote).toBeCalledWith(mockUpdateNoteRequest);
-            expect(mockNoteRepository.getNoteById).toBeCalledTimes(1);
-            expect(mockNoteRepository.getNoteById).toBeCalledWith(mockUpdateNoteRequest.id);
+            expect(mockNoteRepository.getNoteByIdAndUserId).toBeCalledTimes(1);
+            expect(mockNoteRepository.getNoteByIdAndUserId).toBeCalledWith(
+                mockUpdateNoteRequest.id,
+                mockUpdateNoteRequest.user_id
+            );
         });
 
         it('should throw DATA_NOT_FOUND error if note id does not exist', async () => {
@@ -141,24 +148,139 @@ describe('NoteService', () => {
     });
 
     describe('deleteNote', () => {
-        it('should delete note if it belongs to the correct user and return deleted note', () => {});
+        const mockDeleteNoteRequest = {
+            user_id: userId,
+            id: '07534193-0137-4923-96e4-073ace5b2f99'
+        };
 
-        it('should throw DATA_NOT_FOUND error if note id does not exist', () => {});
+        it('should delete note if it belongs to the correct user and return deleted note', async () => {
+            mockNoteRepository.deleteNote = jest.fn().mockImplementation(() => {
+                return 1;
+            });
+
+            mockNoteRepository.getNoteByIdAndUserId = jest.fn().mockImplementation(() => {
+                return mockNoteRepositoryResponse;
+            });
+
+            const expectedResponse = {
+                message: 'Successfully deleted',
+                deleted_resource: mockNoteRepositoryResponse
+            };
+
+            const res = await mockNoteService.deleteNote(mockDeleteNoteRequest);
+
+            expect(res).toEqual(expectedResponse);
+            expect(mockNoteRepository.deleteNote).toBeCalledWith(mockDeleteNoteRequest);
+            expect(mockNoteRepository.getNoteByIdAndUserId).toBeCalledWith(
+                mockDeleteNoteRequest.id,
+                mockDeleteNoteRequest.user_id
+            );
+            expect(mockNoteRepository.deleteNote).toBeCalledTimes(1);
+            expect(mockNoteRepository.getNoteByIdAndUserId).toBeCalledTimes(1);
+        });
+
+        it('should throw DATA_NOT_FOUND error if note does not exist', async () => {
+            mockNoteRepository.deleteNote = jest.fn().mockImplementation(() => {
+                return 0;
+            });
+
+            try {
+                await mockNoteService.deleteNote(mockDeleteNoteRequest);
+            } catch (err: any) {
+                expect(err.error_code).toEqual('DATA_NOT_FOUND');
+                expect(err.message).toEqual(
+                    `Note with user_id:${mockDeleteNoteRequest.user_id} and id:${mockDeleteNoteRequest.id} not found`
+                );
+            }
+        });
     });
 
     describe('archiveOrUnarchiveNote', () => {
-        it('should archive note if it belongs to the correct user and return archived note', () => {});
+        const mockRequest: ArchiveOrUnarchiveNoteRequest = {
+            user_id: userId,
+            id: '07534193-0137-4923-96e4-073ace5b2f99',
+            should_archive: true
+        };
 
-        it('should throw DATA_NOT_FOUND error if note id does not exist', () => {});
+        it('should archive note if it belongs to the correct user and return archived note', async () => {
+            mockNoteRepository.archiveOrUnarchiveNote = jest.fn().mockImplementation(() => {
+                return 1;
+            });
+
+            mockNoteRepository.getNoteByIdAndUserId = jest.fn().mockImplementation(() => {
+                return mockNoteRepositoryResponse;
+            });
+
+            const res = await mockNoteService.archiveOrUnarchiveNote(mockRequest);
+
+            expect(mockNoteRepository.archiveOrUnarchiveNote).toBeCalledTimes(1);
+            expect(mockNoteRepository.archiveOrUnarchiveNote).toBeCalledWith(mockRequest);
+            expect(mockNoteRepository.getNoteByIdAndUserId).toBeCalledTimes(1);
+            expect(mockNoteRepository.getNoteByIdAndUserId).toBeCalledWith(mockRequest.id, mockRequest.user_id);
+            expect(res).toEqual(mockNoteRepositoryResponse);
+        });
+
+        it('should throw DATA_NOT_FOUND error if note id does not exist', async () => {
+            mockNoteRepository.archiveOrUnarchiveNote = jest.fn().mockImplementation(() => {
+                return 0;
+            });
+
+            try {
+                await mockNoteService.archiveOrUnarchiveNote(mockRequest);
+            } catch (err: any) {
+                expect(err.error_code).toEqual('DATA_NOT_FOUND');
+                expect(err.message).toEqual(
+                    `Note with user_id:${mockRequest.user_id} and id:${mockRequest.id} not found`
+                );
+            }
+        });
     });
 
     describe('getNotes', () => {
-        it('should get all notes if it belongs to the correct user ordered by latest updated', () => {});
+        mockNoteRepository.getNotes = jest.fn();
 
-        it('should get all notes with default limit if limit is not specified', () => {});
+        it('should get all notes if it belongs to the correct user', async () => {
+            const mockGetNotesRequest: GetNotesRequest = {
+                user_id: userId,
+                is_archived: false,
+                limit: 15
+            };
 
-        it('should get all unarchived notes by default if is_archived is not specified', () => {});
+            await mockNoteService.getNotes(mockGetNotesRequest);
 
-        it('should return empty array if no notes found', () => {});
+            expect(mockNoteRepository.getNotes).toBeCalledTimes(1);
+            expect(mockNoteRepository.getNotes).toBeCalledWith(mockGetNotesRequest);
+        });
+
+        it('should get all notes with default limit and unarchived if they are not specified', async () => {
+            const expectedGetNotesRequest: GetNotesRequest = {
+                user_id: userId,
+                limit: 10,
+                is_archived: false
+            };
+
+            await mockNoteService.getNotes({ user_id: userId });
+
+            expect(mockNoteRepository.getNotes).toBeCalledTimes(1);
+            expect(mockNoteRepository.getNotes).toBeCalledWith(expectedGetNotesRequest);
+        });
+
+        it('should return empty array if no notes found', async () => {
+            const mockGetNotesRequest: GetNotesRequest = {
+                user_id: userId,
+                is_archived: false,
+                limit: 15
+            };
+
+            mockNoteRepository.getNotes = jest.fn().mockImplementation(() => {
+                throw new CustomError('DATA_NOT_FOUND', 'No notes found', { mockGetNotesRequest });
+            });
+
+            const res = await mockNoteService.getNotes(mockGetNotesRequest);
+
+            expect(mockNoteRepository.getNotes).toBeCalledTimes(1);
+            expect(mockNoteRepository.getNotes).toBeCalledWith(mockGetNotesRequest);
+            expect(res).toEqual([]);
+        });
     });
 });

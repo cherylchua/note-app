@@ -12,16 +12,11 @@ import { CustomError, ErrorCodes } from '../utils/error';
 
 export interface INoteService {
     createNote(userId: string, createNoteRequest: CreateNoteRequest): Promise<Note>;
-    getNotes(getNotesRequest: GetNotesRequest): Promise<Note[]>;
+    getNotes(getNotesRequest: GetNotesRequest): Promise<Note[] | []>;
     updateNote(updateNoteRequest: UpdateNoteRequest): Promise<Note>;
     deleteNote(deleteNoteRequest: DeleteNoteRequest): Promise<DeleteNoteResponse>;
     archiveOrUnarchiveNote(archiveOrUnarchiveNoteRequest: ArchiveOrUnarchiveNoteRequest): Promise<Note>;
 }
-
-// user shouldn't be able to update another user's note
-// user shouldn't be able to delete another user's note
-// user shouldn't be able to get another user's note
-// user shouldn't be able to archive/ unarchive user's note
 
 export class NoteService implements INoteService {
     private noteRepository: NoteRepository;
@@ -40,8 +35,20 @@ export class NoteService implements INoteService {
         return await this.noteRepository.insertAndReturn(userId, createNoteRequest, false);
     }
 
-    async getNotes(getNotesRequest: GetNotesRequest): Promise<Note[]> {
-        throw new Error('Method not implemented.');
+    async getNotes(getNotesRequest: GetNotesRequest): Promise<Note[] | []> {
+        try {
+            return await this.noteRepository.getNotes({
+                user_id: getNotesRequest.user_id,
+                is_archived: getNotesRequest.hasOwnProperty('is_archived') ? getNotesRequest.is_archived : false,
+                limit: getNotesRequest.hasOwnProperty('limit') ? getNotesRequest.limit : 10
+            });
+        } catch (err) {
+            if (err instanceof CustomError && err.error_code === ErrorCodes.DATA_NOT_FOUND) {
+                return [];
+            }
+
+            throw err;
+        }
     }
 
     async updateNote(updateNoteRequest: UpdateNoteRequest): Promise<Note> {
@@ -53,14 +60,29 @@ export class NoteService implements INoteService {
 
         await this.noteRepository.updateNote(updateNoteRequest);
 
-        return await this.noteRepository.getNoteById(updateNoteRequest.id);
+        return await this.noteRepository.getNoteByIdAndUserId(updateNoteRequest.id, updateNoteRequest.user_id);
     }
 
     async deleteNote(deleteNoteRequest: DeleteNoteRequest): Promise<DeleteNoteResponse> {
-        throw new Error('Method not implemented.');
+        const noteToDelete = await this.noteRepository.getNoteByIdAndUserId(
+            deleteNoteRequest.id,
+            deleteNoteRequest.user_id
+        );
+
+        await this.noteRepository.deleteNote(deleteNoteRequest);
+
+        return {
+            message: 'Successfully deleted',
+            deleted_resource: noteToDelete
+        };
     }
 
     async archiveOrUnarchiveNote(archiveOrUnarchiveNoteRequest: ArchiveOrUnarchiveNoteRequest): Promise<Note> {
-        throw new Error('Method not implemented.');
+        await this.noteRepository.archiveOrUnarchiveNote(archiveOrUnarchiveNoteRequest);
+
+        return await this.noteRepository.getNoteByIdAndUserId(
+            archiveOrUnarchiveNoteRequest.id,
+            archiveOrUnarchiveNoteRequest.user_id
+        );
     }
 }

@@ -43,6 +43,7 @@ describe('UserRepository', () => {
             try {
                 return await userRepository.insertAndReturn(mockCreateUserReq);
             } catch (err) {
+                console.log(err);
                 expect(err).toBeInstanceOf(CustomError);
             }
         });

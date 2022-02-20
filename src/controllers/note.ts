@@ -43,7 +43,17 @@ export class NoteController {
 
     async getNotes(req: Request, res: Response, next: NextFunction) {
         try {
-            const getNotesRequest: GetNotesRequest = req.body;
+            const getNotesRequest: GetNotesRequest = {
+                user_id: req.params.user_id
+            };
+
+            if (typeof req.query.is_archived === 'boolean') {
+                getNotesRequest.is_archived = req.query.is_archived;
+            }
+
+            if (typeof req.query.limit === 'number') {
+                getNotesRequest.limit = req.query.limit;
+            }
 
             const getNotesResponse = await this.noteService.getNotes(getNotesRequest);
 
@@ -78,7 +88,10 @@ export class NoteController {
 
     async deleteNote(req: Request, res: Response, next: NextFunction) {
         try {
-            const deleteNoteRequest: DeleteNoteRequest = req.body;
+            const deleteNoteRequest: DeleteNoteRequest = {
+                user_id: req.params.user_id,
+                id: req.params.note_id
+            };
 
             const deleteNoteResponse = await this.noteService.deleteNote(deleteNoteRequest);
 
@@ -90,7 +103,11 @@ export class NoteController {
 
     async archiveOrUnarchiveNote(req: Request, res: Response, next: NextFunction) {
         try {
-            const archiveOrUnarchiveNoteRequest: ArchiveOrUnarchiveNoteRequest = req.body;
+            const archiveOrUnarchiveNoteRequest: ArchiveOrUnarchiveNoteRequest = {
+                user_id: req.params.user_id,
+                id: req.params.note_id,
+                should_archive: req.body.should_archive
+            };
 
             const response = await this.noteService.archiveOrUnarchiveNote(archiveOrUnarchiveNoteRequest);
 

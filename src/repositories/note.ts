@@ -13,7 +13,7 @@ import { CustomError, ErrorCodes } from '../utils/error';
 
 interface INoteRepository {
     insertAndReturn(user_id: string, createNoteRequest: CreateNoteRequest, is_archived: boolean): Promise<Note>;
-    getNoteById(id: string): Promise<Note>;
+    getNoteByIdAndUserId(id: string, userId: string): Promise<Note>;
     getNotes(getNotesRequest: GetNotesRequest): Promise<Note[]>;
     updateNote(updateNoteRequest: UpdateNoteRequest): Promise<void>;
     deleteNote(deleteNoteRequest: DeleteNoteRequest): Promise<void>;
@@ -40,8 +40,11 @@ export class NoteRepository implements INoteRepository {
         return this.mapSqliteToResourceData(result[0]) as Note;
     }
 
-    async getNoteById(id: string): Promise<Note> {
-        const result = await this.dbConnection('notes').where('id', id);
+    async getNoteByIdAndUserId(id: string, userId: string): Promise<Note> {
+        const result = await this.dbConnection('notes').where({
+            id: id,
+            user_id: userId
+        });
 
         if (!result[0]) {
             throw new CustomError(ErrorCodes.DATA_NOT_FOUND, `Note with id ${id} not found`, { id });
@@ -59,9 +62,13 @@ export class NoteRepository implements INoteRepository {
             .update(updateNoteRequest);
 
         if (!res) {
-            throw new CustomError(ErrorCodes.DATA_NOT_FOUND, `Note with id ${updateNoteRequest.id} not found`, {
-                updateNoteRequest
-            });
+            throw new CustomError(
+                ErrorCodes.DATA_NOT_FOUND,
+                `Note with user_id:${updateNoteRequest.user_id} and id:${updateNoteRequest.id} not found`,
+                {
+                    updateNoteRequest
+                }
+            );
         }
 
         return;
@@ -84,12 +91,22 @@ export class NoteRepository implements INoteRepository {
     }
 
     async deleteNote(deleteNoteRequest: DeleteNoteRequest): Promise<void> {
-        return await this.dbConnection('notes')
+        const res = await this.dbConnection('notes')
             .where({
                 user_id: deleteNoteRequest.user_id,
                 id: deleteNoteRequest.id
             })
             .delete();
+
+        if (!res) {
+            throw new CustomError(
+                ErrorCodes.DATA_NOT_FOUND,
+                `Note with user_id:${deleteNoteRequest.user_id} and id:${deleteNoteRequest.id} not found`,
+                { deleteNoteRequest }
+            );
+        }
+
+        return;
     }
 
     async archiveOrUnarchiveNote(archiveOrUnarchiveNoteRequest: ArchiveOrUnarchiveNoteRequest): Promise<void> {

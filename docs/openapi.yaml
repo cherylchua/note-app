@@ -156,12 +156,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400Response'
-        403:
-          description: Forbidden request
+        404:
+          description: Data not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error403Response'
+                $ref: '#/components/schemas/Error404Response'
 
     delete:
       summary: Delete a note belonging to a user
@@ -193,12 +193,12 @@ paths:
                     example: 'Successfully deleted'
                   deleted_resource:
                     $ref: '#/components/schemas/Note'
-        403:
+        404:
           description: Forbidden request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error403Response'
+                $ref: '#/components/schemas/Error404Response'
 
   /users/{user_id}/notes/{note_id}/archive:
     put:
