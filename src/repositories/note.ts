@@ -1,5 +1,7 @@
 import { Knex } from 'knex';
 import { v4 as uuidv4 } from 'uuid';
+import { SqliteError } from 'better-sqlite3';
+
 import { Sqlite3Helper } from '../db/sqlite3';
 import {
     ArchiveOrUnarchiveNoteRequest,
@@ -9,7 +11,7 @@ import {
     Note,
     UpdateNoteRequest
 } from '../entities/note';
-import { CustomError, ErrorCodes } from '../utils/error';
+import { CustomError, ErrorCodes, SqliteErrorCode } from '../utils/error';
 
 interface INoteRepository {
     insertAndReturn(user_id: string, createNoteRequest: CreateNoteRequest, is_archived: boolean): Promise<Note>;
@@ -27,17 +29,24 @@ export class NoteRepository implements INoteRepository {
     }
 
     async insertAndReturn(user_id: string, createNoteRequest: CreateNoteRequest, is_archived: boolean): Promise<Note> {
-        const result = await this.dbConnection('notes')
-            .insert({
-                id: uuidv4(),
-                user_id,
-                title: createNoteRequest.title,
-                content: createNoteRequest.content,
-                is_archived
-            })
-            .returning('*');
+        try {
+            const result = await this.dbConnection('notes')
+                .insert({
+                    id: uuidv4(),
+                    user_id,
+                    title: createNoteRequest.title,
+                    content: createNoteRequest.content,
+                    is_archived
+                })
+                .returning('*');
 
-        return this.mapSqliteToResourceData(result[0]) as Note;
+            return this.mapSqliteToResourceData(result[0]) as Note;
+        } catch (err) {
+            if (err instanceof SqliteError && err.code === SqliteErrorCode.SQLITE_CONSTRAINT_FOREIGNKEY) {
+                throw new CustomError(ErrorCodes.DATA_NOT_FOUND, `User ${user_id} does not exist`, { user_id });
+            }
+            throw err;
+        }
     }
 
     async getNoteByIdAndUserId(id: string, userId: string): Promise<Note> {

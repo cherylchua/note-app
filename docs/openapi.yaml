@@ -77,6 +77,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400Response'
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404Response'
 
     get:
       summary: Get all notes belonging to a user, listed by updated desc
@@ -239,12 +245,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400Response'
-        403:
-          description: Forbidden request
+        404:
+          description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error403Response'
+                $ref: '#/components/schemas/Error404Response'
 
 components:
   schemas:

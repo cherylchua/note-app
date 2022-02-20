@@ -12,7 +12,8 @@ export class CustomError extends Error {
 }
 
 export enum SqliteErrorCode {
-    SQLITE_CONSTRAINT_UNIQUE = 'SQLITE_CONSTRAINT_UNIQUE'
+    SQLITE_CONSTRAINT_UNIQUE = 'SQLITE_CONSTRAINT_UNIQUE',
+    SQLITE_CONSTRAINT_FOREIGNKEY = 'SQLITE_CONSTRAINT_FOREIGNKEY'
 }
 
 export const ErrorCodeMapToHttpStatus: { [key: string]: number } = {

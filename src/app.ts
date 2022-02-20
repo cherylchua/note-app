@@ -1,5 +1,7 @@
 import express, { Application } from 'express';
 import * as OpenApiValidator from 'express-openapi-validator';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
 import path from 'path';
 
 import { errorHandler } from './middlewares/error-handler';
@@ -48,7 +50,10 @@ export async function setupApp(port: string): Promise<express.Application> {
     app.use(express.json({ limit: '5mb', type: 'application/json' }));
     app.use(express.urlencoded({ extended: true }));
 
-    app.use('/spec', express.static(openApiDoc));
+    const openapiDocument = YAML.load(openApiDoc);
+    app.use('/openapi', swaggerUi.serve, swaggerUi.setup(openapiDocument));
+
+    // app.use('/spec', express.static(openApiDoc));
 
     app.use(
         OpenApiValidator.middleware({
