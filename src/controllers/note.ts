@@ -19,10 +19,10 @@ export class NoteController {
 
         this.router = Router();
         this.router.post(`/users/:user_id/notes`, this.createNote.bind(this));
-        this.router.get(`/users/:user_id/notes`, this.createNote.bind(this));
-        this.router.put(`/users/:user_id/notes/:note_id`, this.createNote.bind(this));
-        this.router.delete(`/users/:user_id/notes/:note_id`, this.createNote.bind(this));
-        this.router.put(`/users/:user_id/notes/:note_id/archive`, this.createNote.bind(this));
+        this.router.get(`/users/:user_id/notes`, this.getNotes.bind(this));
+        this.router.put(`/users/:user_id/notes/:note_id`, this.updateNote.bind(this));
+        this.router.delete(`/users/:user_id/notes/:note_id`, this.deleteNote.bind(this));
+        this.router.put(`/users/:user_id/notes/:note_id/archive`, this.archiveOrUnarchiveNote.bind(this));
     }
 
     getRouter() {
@@ -55,7 +55,18 @@ export class NoteController {
 
     async updateNote(req: Request, res: Response, next: NextFunction) {
         try {
-            const updateNoteRequest: UpdateNoteRequest = req.body;
+            const updateNoteRequest: UpdateNoteRequest = {
+                user_id: req.params.user_id,
+                id: req.params.note_id
+            };
+
+            if (req.body.title) {
+                updateNoteRequest.title = req.body.title;
+            }
+
+            if (req.body.content) {
+                updateNoteRequest.content = req.body.content;
+            }
 
             const updateNoteResponse = await this.noteService.updateNote(updateNoteRequest);
 

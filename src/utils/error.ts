@@ -17,7 +17,6 @@ export enum SqliteErrorCode {
 
 export const ErrorCodeMapToHttpStatus: { [key: string]: number } = {
     API_VALIDATION_ERROR: 400,
-    INVALID_USER_ID: 400,
     REQUEST_FORBIDDEN_ERROR: 403,
     DATA_NOT_FOUND: 404,
     DUPLICATE_ERROR: 409,
@@ -26,7 +25,6 @@ export const ErrorCodeMapToHttpStatus: { [key: string]: number } = {
 
 export enum ErrorCodes {
     API_VALIDATION_ERROR = 'API_VALIDATION_ERROR',
-    INVALID_USER_ID = 'INVALID_USER_ID',
     REQUEST_FORBIDDEN_ERROR = 'REQUEST_FORBIDDEN_ERROR',
     DATA_NOT_FOUND = 'DATA_NOT_FOUND',
     DUPLICATE_ERROR = 'DUPLICATE_ERROR',

@@ -2,7 +2,6 @@ import express, { Application } from 'express';
 import * as OpenApiValidator from 'express-openapi-validator';
 import path from 'path';
 
-import { Sqlite3Helper } from './db/sqlite3';
 import { errorHandler } from './middlewares/error-handler';
 
 import { HealthcheckController } from './controllers/healthcheck';
@@ -15,9 +14,7 @@ import { NoteController } from './controllers/note';
 
 // initialise dependencies
 async function init() {
-    const dbConnection = Sqlite3Helper.initialiseConnection();
-
-    const userRepository = new UserRepository(dbConnection);
+    const userRepository = new UserRepository();
     const noteRepository = new NoteRepository();
 
     const userService = new UserService(userRepository);

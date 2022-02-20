@@ -45,7 +45,15 @@ export class NoteService implements INoteService {
     }
 
     async updateNote(updateNoteRequest: UpdateNoteRequest): Promise<Note> {
-        throw new Error('Method not implemented.');
+        if (!updateNoteRequest.title && !updateNoteRequest.content) {
+            throw new CustomError(ErrorCodes.API_VALIDATION_ERROR, 'Title or Content must contain data.', {
+                updateNoteRequest
+            });
+        }
+
+        await this.noteRepository.updateNote(updateNoteRequest);
+
+        return await this.noteRepository.getNoteById(updateNoteRequest.id);
     }
 
     async deleteNote(deleteNoteRequest: DeleteNoteRequest): Promise<DeleteNoteResponse> {

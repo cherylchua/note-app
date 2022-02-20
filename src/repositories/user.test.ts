@@ -20,7 +20,7 @@ describe('UserRepository', () => {
     beforeAll(async () => {
         userRepository = new UserRepository();
         dbConnection = Sqlite3Helper.dbConnection;
-
+        await down(dbConnection);
         await up(dbConnection);
     });
 
@@ -41,7 +41,7 @@ describe('UserRepository', () => {
 
         it('should throw CustomError if SqliteError is thrown', async () => {
             try {
-                await userRepository.insertAndReturn(mockCreateUserReq);
+                return await userRepository.insertAndReturn(mockCreateUserReq);
             } catch (err) {
                 expect(err).toBeInstanceOf(CustomError);
             }

@@ -21,7 +21,7 @@ describe('NoteRepository', () => {
         noteRepository = new NoteRepository();
 
         dbConnection = Sqlite3Helper.dbConnection;
-
+        await down(dbConnection);
         await up(dbConnection);
 
         const mockCreateUserReq: CreateUserRequest = {
@@ -118,6 +118,29 @@ describe('NoteRepository', () => {
             expect(res.created_at).toBeTruthy();
             expect(res.updated_at).toBeTruthy();
         });
+
+        it('should throw DATA_NOT_FOUND error if trying to update note that doesnt exist', async () => {
+            const mockUpdateNoteReq: UpdateNoteRequest = {
+                user_id: userId,
+                id: 'note that doesnt exist',
+                title: 'All Too Well'
+            };
+
+            const expectedError = {
+                error_code: 'DATA_NOT_FOUND',
+                message: `Note with id ${mockUpdateNoteReq.id} not found`,
+                context: { mockUpdateNoteReq }
+            };
+
+            try {
+                await noteRepository.updateNote(mockUpdateNoteReq);
+            } catch (err: any) {
+                if (err && err.error_code && err.message) {
+                    expect(err.error_code).toEqual(expectedError.error_code);
+                    expect(err.message).toEqual(expectedError.message);
+                }
+            }
+        });
     });
 
     describe('getNoteById', () => {
@@ -143,6 +166,7 @@ describe('NoteRepository', () => {
                 message: `Note with id non existent note not found`,
                 context: { id: 'non existent note' }
             };
+
             try {
                 return await noteRepository.getNoteById('non existent note');
             } catch (err: any) {

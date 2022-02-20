@@ -2,7 +2,7 @@ import { Knex } from 'knex';
 import { v4 as uuidv4 } from 'uuid';
 import { SqliteError } from 'better-sqlite3';
 
-import { Sqlite3Helper } from 'src/db/sqlite3';
+import { Sqlite3Helper } from '../db/sqlite3';
 import { CustomError, SqliteErrorCode } from './../utils/error';
 
 import { CreateUserRequest, User } from './../entities/user';

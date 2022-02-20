@@ -1,7 +1,11 @@
 import { Knex } from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
-    await knex.schema.createTableIfNotExists('users', (table) => {
+    if ((await knex.schema.hasTable('users')) && (await knex.schema.hasTable('notes'))) {
+        return;
+    }
+
+    await knex.schema.createTable('users', (table) => {
         table.uuid('id').primary();
         table.string('first_name').notNullable();
         table.string('last_name').notNullable();
@@ -9,7 +13,7 @@ export async function up(knex: Knex): Promise<void> {
         table.timestamps(true, true, false); // creates created_at and updated_at columns
     });
 
-    await knex.schema.createTableIfNotExists('notes', (table) => {
+    await knex.schema.createTable('notes', (table) => {
         table.uuid('id').primary();
         table.uuid('user_id').notNullable().references('id').inTable('users').onDelete('CASCADE');
         table.string('title');

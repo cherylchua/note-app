@@ -51,12 +51,20 @@ export class NoteRepository implements INoteRepository {
     }
 
     async updateNote(updateNoteRequest: UpdateNoteRequest): Promise<void> {
-        return await this.dbConnection('notes')
+        const res = await this.dbConnection('notes')
             .where({
                 user_id: updateNoteRequest.user_id,
                 id: updateNoteRequest.id
             })
             .update(updateNoteRequest);
+
+        if (!res) {
+            throw new CustomError(ErrorCodes.DATA_NOT_FOUND, `Note with id ${updateNoteRequest.id} not found`, {
+                updateNoteRequest
+            });
+        }
+
+        return;
     }
 
     async getNotes(getNotesRequest: GetNotesRequest): Promise<Note[]> {

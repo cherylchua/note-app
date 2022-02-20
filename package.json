@@ -4,7 +4,7 @@
     "description": "Manage personal notes in a multi-user environment",
     "main": "server.ts",
     "scripts": {
-        "test": "NODE_ENV=test jest",
+        "test": "NODE_ENV=test jest --runInBand --detectOpenHandles --forceExit",
         "format": "prettier --config .prettierrc.json -w '*.{ts,js,json,yaml}' './src/**/*.{ts,js,json,yaml}'",
         "eslint": "eslint",
         "build": "rm -rf dist && tsc",
