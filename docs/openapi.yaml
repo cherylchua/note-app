@@ -381,7 +381,6 @@ components:
           type: string
           enum:
             - API_VALIDATION_ERROR
-            - INVALID_USER_ID
         message:
           type: string
           example: 'Some error message'

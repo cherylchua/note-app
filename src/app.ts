@@ -33,8 +33,6 @@ async function init() {
     };
 }
 
-const openApiDoc = path.join(__dirname, '..', 'docs', 'openapi.yaml');
-
 // setup application routes with controllers
 async function setupRoutes(app: Application) {
     const { healthcheckController, userController, noteController } = await init();
@@ -50,10 +48,8 @@ export async function setupApp(port: string): Promise<express.Application> {
     app.use(express.json({ limit: '5mb', type: 'application/json' }));
     app.use(express.urlencoded({ extended: true }));
 
-    const openapiDocument = YAML.load(openApiDoc);
-    app.use('/openapi', swaggerUi.serve, swaggerUi.setup(openapiDocument));
-
-    // app.use('/spec', express.static(openApiDoc));
+    const openApiDoc = path.join(__dirname, '..', '..', 'docs', 'openapi.yaml');
+    app.use('/openapi', swaggerUi.serve, swaggerUi.setup(YAML.load(openApiDoc)));
 
     app.use(
         OpenApiValidator.middleware({

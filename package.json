@@ -6,13 +6,14 @@
     "scripts": {
         "test": "NODE_ENV=test jest --runInBand --detectOpenHandles --forceExit",
         "format": "prettier --config .prettierrc.json -w '*.{ts,js,json,yaml}' './src/**/*.{ts,js,json,yaml}'",
-        "eslint": "eslint",
         "build": "rm -rf dist && tsc",
-        "start": "NODE_ENV=development tsc && node ./dist/src/server.js",
+        "start": "node ./dist/src/server.js",
         "watch": "NODE_ENV=development nodemon src/server.ts",
         "migrate:create": "knex migrate:make create_users_and_notes_table -x ts",
-        "migrate:up": "knex migrate:up 20220217000647_create_users_and_notes_table.ts",
-        "migrate:down": "knex migrate:down 20220217000647_create_users_and_notes_table.ts"
+        "migrate:latest": "knex migrate:latest",
+        "migrate:down": "knex migrate:down 20220217000647_create_users_and_notes_table.ts",
+        "docker-compose:up": "docker-compose -f docker-compose.yaml up -d",
+        "docker:migrate": "node_modules/.bin/knex migrate:latest --knexfile ./dist/knexfile.js"
     },
     "repository": {
         "type": "git",

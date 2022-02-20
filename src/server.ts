@@ -5,7 +5,7 @@ dotenv.config();
 
 (async () => {
     try {
-        const app = await setupApp(process.env.PORT || '3000');
+        const app = await setupApp('3000');
 
         app.listen(app.get('port'), () => {
             console.log({
