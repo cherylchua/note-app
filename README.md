@@ -59,6 +59,8 @@ Prerequisites: Docker, Docker compose
 
 The openAPI spec is rendered with the help of Swagger. When the app is running, navigate to `localhost:3000/openapi`.
 
+To test out the APIs, there is a `postman_collection.json` ready in the root directory. To use it, open Postman and import the file. You will need to change the hardcoded `user_id`'s and `note_id`'s
+
 ## Decisions and Rationale
 
 ### Database
