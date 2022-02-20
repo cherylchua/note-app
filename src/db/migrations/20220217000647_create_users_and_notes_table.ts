@@ -21,6 +21,8 @@ export async function up(knex: Knex): Promise<void> {
         table.boolean('is_archived').notNullable();
         table.timestamps(true, true, false); // creates created_at and updated_at columns
     });
+
+    console.log(`Users and Notes tables created`);
 }
 
 export async function down(knex: Knex): Promise<void> {

@@ -49,6 +49,8 @@ export async function setupApp(port: string): Promise<express.Application> {
     app.use(express.urlencoded({ extended: true }));
 
     const openApiDoc = path.join(__dirname, '..', '..', 'docs', 'openapi.yaml');
+    console.log('dirname: ', __dirname);
+
     app.use('/openapi', swaggerUi.serve, swaggerUi.setup(YAML.load(openApiDoc)));
 
     app.use(

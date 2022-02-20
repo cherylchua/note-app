@@ -1,5 +1,6 @@
 import { Knex } from 'knex';
 import { v4 as uuidv4 } from 'uuid';
+import moment from 'moment';
 import { SqliteError } from 'better-sqlite3';
 
 import { Sqlite3Helper } from '../db/sqlite3';
@@ -68,7 +69,10 @@ export class NoteRepository implements INoteRepository {
                 user_id: updateNoteRequest.user_id,
                 id: updateNoteRequest.id
             })
-            .update(updateNoteRequest);
+            .update({
+                ...updateNoteRequest,
+                updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
+            });
 
         if (!res) {
             throw new CustomError(
@@ -125,7 +129,8 @@ export class NoteRepository implements INoteRepository {
                 id: archiveOrUnarchiveNoteRequest.id
             })
             .update({
-                is_archived: archiveOrUnarchiveNoteRequest.should_archive
+                is_archived: archiveOrUnarchiveNoteRequest.should_archive,
+                updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
             });
     }
 

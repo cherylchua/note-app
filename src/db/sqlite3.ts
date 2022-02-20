@@ -8,6 +8,8 @@ export class Sqlite3Helper {
     public static initialiseConnection(): Knex {
         this.dbConnection = knex(config[`${process.env.NODE_ENV}`]);
 
+        console.log('DB Config: ', config[`${process.env.NODE_ENV}`]);
+
         return Sqlite3Helper.dbConnection;
     }
 

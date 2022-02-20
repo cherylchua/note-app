@@ -28,8 +28,9 @@ Prerequisites: Node v12
 
 1. Create your own `.env` file in the root project folder containing the same environment variables as `.env.example` (or just rename `.env.example` to `.env`)
 2. Run `npm install` to download dependencies
-3. Run `npm run migrate:latest` to create the DB and tables
-4. Run `npm run build && npm run start` to transpile and start the server
+3. Run `npm run build` to transpile
+4. Run `npm run migrate:latest` to create the DB and tables
+5. Run `npm run start` to start the server
 
 #### npm scripts
 

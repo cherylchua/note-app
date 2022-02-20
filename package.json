@@ -10,7 +10,7 @@
         "start": "node ./dist/src/server.js",
         "watch": "NODE_ENV=development nodemon src/server.ts",
         "migrate:create": "knex migrate:make create_users_and_notes_table -x ts",
-        "migrate:latest": "knex migrate:latest",
+        "migrate:latest": "knex migrate:latest --cwd ./dist",
         "migrate:down": "knex migrate:down 20220217000647_create_users_and_notes_table.ts",
         "docker-compose:up": "docker-compose -f docker-compose.yaml up -d",
         "docker:migrate": "node_modules/.bin/knex migrate:latest --knexfile ./dist/knexfile.js"
@@ -31,6 +31,7 @@
         "express": "^4.17.2",
         "express-openapi-validator": "^4.13.5",
         "knex": "^1.0.3",
+        "moment": "^2.29.1",
         "typescript": "^4.5.5"
     },
     "devDependencies": {
