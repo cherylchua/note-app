@@ -71,7 +71,9 @@ To test out the APIs, there is a `postman_collection.json` ready in the root dir
 
 -   I decided on Knex as a query builder, rather than a full heavyweight ORM (TypeORM) which I thought would be a bit overkill for the app. The main reason for using Knex as opposed to the sqlite3 client was to get the benefits on migration handling. Knex keeps track of migrations and this should allow automation of applying migrations in the CI/CD pipeline in the future.
 
-### Database client
+### OpenAPI
+The OpenAPI doc was written before the code during the planning stage, and is also used in the express middleware to validate request and responses allowed by each endpoint. 
+
 
 ## Further Work
 
